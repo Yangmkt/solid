@@ -29,53 +29,38 @@
       height: 100%;
       width: 0%;
       background-color: #1E90FF;
-      transition: width 0.1s ease;
-    }
-
-    .done-message {
-      margin-top: 30px;
-      font-size: 18px;
-    }
-
-    .keyword {
-      color: red;
-      font-weight: bold;
+      transition: width 0.1s linear;
     }
   </style>
 </head>
 <body>
 
-  <div class="loading-text">关键词正在加载中：</div>
-  <div id="barArea"></div>
-
-  <div class="done-message" id="doneMessage" style="display: none;">
-    您的关键词是：<span class="keyword">红色</span>
+  <div class="loading-text">正在排队中</div>
+  <div class="bar-container">
+    <div class="progress-fill" id="fillBar"></div>
   </div>
 
   <script>
-    const formatType = 'solid'; // 设置为 'solid' 连续进度条
-    const duration = 15000; // 总时长（毫秒）
-    const barArea = document.getElementById('barArea');
-    const doneMessage = document.getElementById('doneMessage');
+    const totalDuration = 50000;       // 总时长为 50 秒
+    const targetProgress = 0.3;        // 加载 30%
 
-    if (formatType === 'solid') {
-      // 连续进度条
-      barArea.innerHTML = `
-        <div class="bar-container">
-          <div class="progress-fill" id="fillBar"></div>
-        </div>
-      `;
-      const fill = document.getElementById('fillBar');
-      let startTime = Date.now();
-      const interval = setInterval(() => {
-        let percent = Math.min((Date.now() - startTime) / duration * 100, 100);
-        fill.style.width = percent + '%';
-        if (percent >= 100) {
-          clearInterval(interval);
-          doneMessage.style.display = 'block';
-        }
-      }, 50);
-    }
+    const fillBar = document.getElementById('fillBar');
+    let filled = 0;
+    const intervalTime = 50;
+    const steps = totalDuration / intervalTime;
+    const fillPerStep = (targetProgress * 100) / steps;
+
+    const interval = setInterval(() => {
+      filled += fillPerStep;
+      fillBar.style.width = `${Math.min(filled, targetProgress * 100)}%`;
+
+      if (filled >= targetProgress * 100) {
+        clearInterval(interval);
+        setTimeout(() => {
+          alert('您对本网站的使用感受如何？请返回问卷界面回答相应问题。');
+        }, 200);
+      }
+    }, intervalTime);
   </script>
 </body>
 </html>
