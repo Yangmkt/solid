@@ -21,13 +21,12 @@
       height: 20px;
       background-color: #ccc;
       border-radius: 5px;
-      overflow: hidden;
       position: relative;
     }
 
-    .progress-fill {
+    .solid-fill {
       height: 100%;
-      width: 0%;
+      width: 0%; /* 初始宽度为 0 */
       background-color: #1E90FF;
       transition: width 0.1s linear;
     }
@@ -36,24 +35,27 @@
 <body>
 
   <div class="loading-text">排队抢票中...你的号码牌是 123...</div>
-  <div class="bar-container">
-    <div class="progress-fill" id="fillBar"></div>
-  </div>
+  <div id="barArea"></div>
 
   <script>
-    const totalDuration = 10000;       // 总时长为 10 秒
-    const targetProgress = 0.3;        // 加载 30%
+    const totalDuration = 40000;       // 总时长 40 秒
+    const targetProgress = 0.3;        // ✅ 目标加载 30% 进度
 
-    const fillBar = document.getElementById('fillBar');
+    const barArea = document.getElementById('barArea');
+    barArea.innerHTML = `<div class="bar-container" id="solidBar"><div class="solid-fill" id="fill"></div></div>`;
+    const fillElement = document.getElementById('fill');
+
     let filled = 0;
-    const intervalTime = 50;
-    const steps = totalDuration / intervalTime;
-    const fillPerStep = (targetProgress * 100) / steps;
+    const intervalTime = 50; // 每 50 毫秒更新一次
+    const steps = totalDuration / intervalTime; // 总的更新次数
+    const fillPerStep = 100 / steps; // 每步填充的宽度，100% 的进度条在 40 秒内完成
 
     const interval = setInterval(() => {
-      filled += fillPerStep;
-      fillBar.style.width = `${Math.min(filled, targetProgress * 100)}%`;
+      filled += fillPerStep; // 更新已填充的宽度
 
+      fillElement.style.width = `${Math.min(filled, targetProgress * 100)}%`;
+
+      // 如果填充达到目标宽度，停止进度条
       if (filled >= targetProgress * 100) {
         clearInterval(interval);
         setTimeout(() => {
